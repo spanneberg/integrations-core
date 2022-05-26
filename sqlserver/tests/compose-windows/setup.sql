@@ -2,16 +2,17 @@
 CREATE LOGIN datadog WITH PASSWORD = 'Password12!';
 CREATE USER datadog FOR LOGIN datadog;GRANT SELECT on sys.dm_os_performance_counters to datadog;
 GRANT VIEW SERVER STATE to datadog;
-GRANT CONNECT ANY DATABASE to datadog;
 GRANT VIEW ANY DEFINITION to datadog;
+
+-- note that we deliberately don't grant "CONNECT ANY DATABASE" here because that permission
+-- is not supported in SQL Server 2012. This is OK for the integration tests because in the tests
+-- we can explicitly create all users in the databases which they need to use
 
 -- test users
 CREATE LOGIN bob WITH PASSWORD = 'Password12!';
 CREATE USER bob FOR LOGIN bob;
-GRANT CONNECT ANY DATABASE to bob;
 CREATE LOGIN fred WITH PASSWORD = 'Password12!';
 CREATE USER fred FOR LOGIN fred;
-GRANT CONNECT ANY DATABASE to fred;
 GO
 
 -- Create test database for integration tests

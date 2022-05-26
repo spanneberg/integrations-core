@@ -12,7 +12,7 @@ $smo = New-Object 'Microsoft.SqlServer.Management.Smo.Server' localhost
 $smo.Settings.LoginMode = "Mixed"
 $smo.Alter()
 
-Restart-Service -Name MSSQLSERVER -Force
-
 sqlcmd -Q "ALTER login sa ENABLE;"
 sqlcmd -Q "ALTER login sa WITH PASSWORD = 'Password123';"
+
+Restart-Service -Name MSSQLSERVER -Force
