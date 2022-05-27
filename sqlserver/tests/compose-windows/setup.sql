@@ -4,10 +4,6 @@ CREATE USER datadog FOR LOGIN datadog;GRANT SELECT on sys.dm_os_performance_coun
 GRANT VIEW SERVER STATE to datadog;
 GRANT VIEW ANY DEFINITION to datadog;
 
--- note that we deliberately don't grant "CONNECT ANY DATABASE" here because that permission
--- is not supported in SQL Server 2012. This is OK for the integration tests because in the tests
--- we can explicitly create all users in the databases which they need to use
-
 -- test users
 CREATE LOGIN bob WITH PASSWORD = 'Password12!';
 CREATE USER bob FOR LOGIN bob;
@@ -15,17 +11,31 @@ CREATE LOGIN fred WITH PASSWORD = 'Password12!';
 CREATE USER fred FOR LOGIN fred;
 GO
 
+-- note that we deliberately don't grant "CONNECT ANY DATABASE" here because that permission
+-- is not supported in SQL Server 2012. This is OK for the integration tests because in the tests
+-- instead we explicitly create the datadog user in the other databases to grant it access
+USE model;
+CREATE USER datadog FOR LOGIN datadog;
+GO
+USE msdb;
+CREATE USER datadog FOR LOGIN datadog;
+GO
+
 -- Create test database for integration tests
 -- only bob and fred have read/write access to this database
+-- the datadog user has only connect access but can't read any objects
 CREATE DATABASE datadog_test;
 GO
 USE datadog_test;
+
 -- This table is pronounced "things" except we've replaced "th" with the greek lower case "theta" to ensure we
 -- correctly support unicode throughout the integration.
 CREATE TABLE datadog_test.dbo.ϑings (id int, name varchar(255));
 INSERT INTO datadog_test.dbo.ϑings VALUES (1, 'foo'), (2, 'bar');
 CREATE USER bob FOR LOGIN bob;
 CREATE USER fred FOR LOGIN fred;
+CREATE USER datadog FOR LOGIN datadog;
+
 GO
 
 EXEC sp_addrolemember 'db_datareader', 'bob'
