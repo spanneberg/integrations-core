@@ -1,6 +1,7 @@
 -- datadog user
 CREATE LOGIN datadog WITH PASSWORD = 'Password12!';
-CREATE USER datadog FOR LOGIN datadog;GRANT SELECT on sys.dm_os_performance_counters to datadog;
+CREATE USER datadog FOR LOGIN datadog;
+GRANT SELECT on sys.dm_os_performance_counters to datadog;
 GRANT VIEW SERVER STATE to datadog;
 GRANT VIEW ANY DEFINITION to datadog;
 
@@ -11,9 +12,9 @@ CREATE LOGIN fred WITH PASSWORD = 'Password12!';
 CREATE USER fred FOR LOGIN fred;
 GO
 
--- note that we deliberately don't grant "CONNECT ANY DATABASE" here because that permission
--- is not supported in SQL Server 2012. This is OK for the integration tests because in the tests
--- instead we explicitly create the datadog user in the other databases to grant it access
+-- note that we deliberately don't grant "CONNECT ANY DATABASE" to the agent user here because that
+-- permission is not supported in SQL Server 2012. This is OK for the integration tests because in
+-- the tests instead we explicitly create the datadog user in each database as a workaround
 USE model;
 CREATE USER datadog FOR LOGIN datadog;
 GO
@@ -34,8 +35,8 @@ CREATE TABLE datadog_test.dbo.ϑings (id int, name varchar(255));
 INSERT INTO datadog_test.dbo.ϑings VALUES (1, 'foo'), (2, 'bar');
 CREATE USER bob FOR LOGIN bob;
 CREATE USER fred FOR LOGIN fred;
-CREATE USER datadog FOR LOGIN datadog;
-
+-- we don't need to recreate the datadog user in this new DB because it already exists in the model
+-- database so it's copied by default to new databases
 GO
 
 EXEC sp_addrolemember 'db_datareader', 'bob'
