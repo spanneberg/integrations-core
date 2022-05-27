@@ -159,10 +159,10 @@ INIT_CONFIG_OBJECT_NAME = {
             'tags': ['optional_tag:tag1'],
         },
         {
-            'name': 'sqlserver.active_requests',
-            'counter_name': 'Active requests',
-            'instance_name': 'default',
-            'object_name': 'SQLServer:Workload Group Stats',
+            'name': 'sqlserver.broker_activation.tasks_running',
+            'counter_name': 'Tasks Running',
+            'instance_name': 'tempdb',
+            'object_name': 'SQLServer:Broker Activation',
             'tags': ['optional_tag:tag1'],
         },
     ]
